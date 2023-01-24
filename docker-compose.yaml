@@ -30,7 +30,7 @@ services:
     command: exit 0
     build:
       dockerfile: Dockerfile
-      target: env
+      target: runtime
       context: .
       args:
         POETRY_OPTIONS: "--no-root --with=dev"
@@ -45,9 +45,10 @@ services:
 
   jupyter:
     <<: *python-development
-    image: localhost/de-zoomcamp:jupyter
     ports:
       - "8888"
+    profiles:
+      - dev
     command:
       - jupyter
       - notebook
@@ -58,16 +59,14 @@ services:
 
   pgdatabase:
     image: postgres:13
-    environment:
-      - POSTGRES_USER=zoomcamp
-      - POSTGRES_PASSWORD=zoomcamp
-      - POSTGRES_DB=ny_taxi
+    ports:
+      - "5432"
     volumes:
       - type: volume
         source: pgdata
         target: /var/lib/postgresql/data
-    ports:
-      - "5432"
+    env_file:
+      - .env
 
 volumes:
   pip-cache:

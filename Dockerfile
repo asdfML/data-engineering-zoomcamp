@@ -7,7 +7,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
     apt update && apt-get --no-install-recommends install -y \
-        wget vim
+        wget
 
 ENV VIRTUAL_ENV /opt/venv
 RUN python -m venv --copies $VIRTUAL_ENV
@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/var/cache/pypoetry \
 
 WORKDIR /pyproject
 
-FROM python:3.11-slim-bullseye as env
+FROM python:3.11-slim-bullseye as runtime
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
@@ -54,8 +54,10 @@ RUN set -eux; \
 USER zoomcamp
 
 ENV PYTHONPATH /home/zoomcamp/de_zoomcamp/src
+ENV PROJECT_ROOT /home/zoomcamp/de_zoomcamp
 WORKDIR /home/zoomcamp/de_zoomcamp
 
-FROM env as prod
+FROM runtime as prod
 
 COPY --chown=zoomcamp:zoomcamp src/ /home/zoomcamp/de_zoomcamp/src/
+COPY --chown=zoomcamp:zoomcamp bin/ /home/zoomcamp/de_zoomcamp/bin/
