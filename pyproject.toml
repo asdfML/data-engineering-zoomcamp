@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "de_zoomcamp"
+version = "1.0.0"
+description = "DataTalksClub/data-engineering-zoomcamp"
+authors = ["Pavel Boldyrev <pavelboldyrev@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+pandas = "^1.5"
+sqlalchemy = "^1.4"
+psycopg2 = "^2.9"
+cytoolz = "~0.12"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+notebook = "~6.5"
+pylint = "^2.15"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
