@@ -85,3 +85,4 @@ target/
 
 /.env
 /data/raw
+/notebooks/debug*.ipynb
