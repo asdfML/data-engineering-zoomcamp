@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  poetry:
+    platform: linux/x86_64
+    image: localhost/de-zoomcamp:build
+    entrypoint: poetry
+    build:
+      dockerfile: Dockerfile
+      target: build
+      context: .
+      args:
+        POETRY_OPTIONS: "--no-root --with=dev"
+    profiles:
+      - cli
+    volumes:
+      - type: bind
+        source: .
+        target: /pyproject
+      - type: volume
+        source: pip-cache
+        target: /var/cache/pip
+      - type: volume
+        source: poetry-cache
+        target: /var/cache/pypoetry
+
+  dev: &python-development
+    platform: linux/x86_64
+    image: localhost/de-zoomcamp:dev
+    command: exit 0
+    build:
+      dockerfile: Dockerfile
+      target: env
+      context: .
+      args:
+        POETRY_OPTIONS: "--no-root --with=dev"
+    volumes:
+      - type: bind
+        source: .
+        target: /home/zoomcamp/de_zoomcamp
+    environment:
+      - PYTHONDONTWRITEBYTECODE=true
+    env_file:
+      - .env
+
+  jupyter:
+    <<: *python-development
+    image: localhost/de-zoomcamp:jupyter
+    ports:
+      - "8888"
+    command:
+      - jupyter
+      - notebook
+      - --no-browser
+      - --ip=0.0.0.0
+      - --NotebookApp.iopub_data_rate_limit=100000000
+      - --NotebookApp.token="$JUPYTER_TOKEN"
+
+  pgdatabase:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=zoomcamp
+      - POSTGRES_PASSWORD=zoomcamp
+      - POSTGRES_DB=ny_taxi
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data
+    ports:
+      - "5432"
+
+volumes:
+  pip-cache:
+    external: true
+
+  poetry-cache:
+    external: true
+
+  pgdata:
+    driver: local
