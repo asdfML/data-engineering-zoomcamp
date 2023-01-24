@@ -81,5 +81,7 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-/.env
 !.gitkeep
+
+/.env
+/data/raw
