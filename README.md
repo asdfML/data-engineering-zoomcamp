@@ -35,7 +35,7 @@ cp .env.dist .env
 docker compose up -d
 ```
 
-## Homework #1
+## Week 1 homework
 
 #### Docker and SQL
 
