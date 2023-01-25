@@ -4,6 +4,7 @@
 
 Usage:
   homework.py ingest [options] (--append | --replace) <url> <database> <table>
+  homework.py answers <database> <table_data> <table_zones>
   homework.py (-h | --help)
   homework.py --version
 
@@ -100,6 +101,88 @@ def ingest_command(
     return thread_last(iterator, (map, ingest_chunk), tqdm, sum)
 
 
+def answers_command(database: str, table_data: str, table_zones: str) -> None:
+    engine = create_engine(
+        os.getenv("POSTGRES_HOST", "localhost"),
+        int(os.getenv("POSTGRES_PORT", "5432")),
+        os.getenv("POSTGRES_USER"),
+        os.getenv("POSTGRES_PASSWORD"),
+        database,
+    )
+
+    print("Question 1: Knowing docker tags")
+    print("Answer 1:", "--iidfile string", "\n")
+
+    print("Question 2: Understanding docker first run")
+    print("Answer 2:", 3, "\n")
+
+    connection: sa.future.Connection = engine.connect()
+
+    print("Question 3: Count records")
+
+    query = f"""
+        SELECT count(*)
+        FROM {table_data}
+        WHERE lpep_pickup_datetime::DATE = '2019-01-15' AND
+              lpep_dropoff_datetime::DATE = '2019-01-15'
+    """
+
+    result = connection.execute(sa.text(query))
+    answer = result.scalar()
+
+    print("Answer 3:", answer, "\n")
+
+    print("Question 4: Largest trip for each day")
+
+    query = f"""
+        SELECT lpep_pickup_datetime::DATE as date, max(trip_distance) as max
+        FROM {table_data}
+        GROUP BY lpep_pickup_datetime::DATE
+        ORDER BY max DESC LIMIT 1;
+    """
+
+    result = connection.execute(sa.text(query))
+    answer = result.one()[0]
+
+    print("Answer 4:", answer, "\n")
+
+    print("Question 5: The number of passengers")
+
+    query = f"""
+        SELECT passenger_count as passengers, count(*) as count
+        FROM {table_data}
+        WHERE lpep_pickup_datetime::DATE = '2019-01-01'
+        AND passenger_count BETWEEN 2 AND 3
+        GROUP BY passenger_count;
+    """
+
+    result = connection.execute(sa.text(query))
+    answer = result.mappings().all()
+
+    print("Answer 5:", answer, "\n")
+
+    print("Question 6: Largest tip")
+
+    query = f"""
+        SELECT dropoff_zones."Zone", max(tip_amount) as max_tip
+        FROM {table_data}
+            INNER JOIN {table_zones} as pickup_zones
+                ON green_taxi_data."PULocationID" = pickup_zones."LocationID"
+            INNER JOIN {table_zones} as dropoff_zones
+                ON green_taxi_data."DOLocationID" = dropoff_zones."LocationID"
+        WHERE pickup_zones."Zone" = 'Astoria'
+        GROUP BY dropoff_zones."Zone"
+        ORDER BY max_tip DESC LIMIT 1;
+    """
+
+    result = connection.execute(sa.text(query))
+    answer = result.one()[0]
+
+    print("Answer 6:", answer, "\n")
+
+    connection.close()
+
+
 if __name__ == "__main__":
     arguments = docopt(__doc__, version="Zoomcamp docker'n'sql week1 homework")
     if arguments["ingest"]:
@@ -125,3 +208,9 @@ if __name__ == "__main__":
         )
 
         print(f"{n_rows} rows successfully ingested to the table")
+    elif arguments["answers"]:
+        answers_command(
+            arguments["<database>"],
+            arguments["<table_data>"],
+            arguments["<table_zones>"],
+        )

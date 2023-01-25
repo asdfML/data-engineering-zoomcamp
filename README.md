@@ -37,10 +37,11 @@ docker compose up -d
 
 ## Homework #1
 
-#### Data ingestion
+#### Docker and SQL
 
 ```bash
 docker compose build homework_docker_sql
 docker compose run --rm homework_docker_sql ingest --replace --dt-columns=lpep_pickup_datetime,lpep_dropoff_datetime https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-01.csv.gz ny_taxi green_taxi_data
 docker compose run --rm homework_docker_sql ingest --replace https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv ny_taxi zones
+docker compose run --rm homework_docker_sql answers ny_taxi green_taxi_data zones
 ```
