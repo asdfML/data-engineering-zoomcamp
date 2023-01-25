@@ -57,6 +57,21 @@ services:
       - --NotebookApp.iopub_data_rate_limit=100000000
       - --NotebookApp.token="$JUPYTER_TOKEN"
 
+  homework_docker_sql:
+    platform: linux/x86_64
+    image: localhost/de-zoomcamp:prod
+    entrypoint: bin/week_1_docker_sql/homework.py
+    profiles:
+      - cli
+    depends_on:
+      - pgdatabase
+    build:
+      dockerfile: Dockerfile
+      target: prod
+      context: .
+    env_file:
+      - .env
+
   pgdatabase:
     image: postgres:13
     ports:

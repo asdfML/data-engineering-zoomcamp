@@ -11,6 +11,8 @@ pandas = "^1.5"
 sqlalchemy = "^1.4"
 psycopg2 = "^2.9"
 cytoolz = "~0.12"
+docopt = "~0.6"
+tqdm = "^4.64"
 
 [tool.poetry.group.dev]
 optional = true
