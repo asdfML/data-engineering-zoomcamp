@@ -10,10 +10,10 @@ Links
 
 ## Prepare environment
 
-`!WARNING`_You need to have a new Docker installed to handle 1.4 syntax of the
+`!WARNING` _You need to have a new Docker installed to handle 1.4 syntax of the
 Dockerfile. Docker version 20.10.7 and above is known to work._
 
-`!WARNING`_Properly tested only with BuiltKit enabled. Follow the links for further
+`!WARNING` _Properly tested only with BuiltKit enabled. Follow the links for further
 details: [documentation](https://docs.docker.com/build/buildkit/),
 [stackoverflow](https://stackoverflow.com/questions/58592259/how-do-you-enable-buildkit-with-docker-compose)._
 
