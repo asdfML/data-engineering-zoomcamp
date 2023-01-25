@@ -31,6 +31,8 @@ repos:
           - --py37-plus
           - --py38-plus
           - --py39-plus
+          - --py310-plus
+          - --py311-plus
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
