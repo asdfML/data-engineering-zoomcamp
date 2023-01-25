@@ -1,14 +1,6 @@
 # syntax = docker/dockerfile:1.4
 FROM python:3.11-bullseye as build
 
-RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
-    apt update && apt-get --no-install-recommends install -y \
-        wget
-
 ENV VIRTUAL_ENV /opt/venv
 RUN python -m venv --copies $VIRTUAL_ENV
 ENV PATH $VIRTUAL_ENV/bin:$PATH
@@ -41,7 +33,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
     apt update && apt-get --no-install-recommends install -y \
-        libpq5
+        libpq5 wget
 
 COPY --from=build /opt/venv /opt/venv/
 ENV VIRTUAL_ENV /opt/venv
