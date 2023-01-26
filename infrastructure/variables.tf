@@ -3,7 +3,7 @@ locals {
 }
 
 variable "project" {
-  description = "<your project id>"
+  description = "polar-leaf-375811"
 }
 
 variable "region" {
